@@ -4,7 +4,6 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 
-import io.swagger.models.Contact;
 import springfox.documentation.builders.ApiInfoBuilder;
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
@@ -32,10 +31,6 @@ public class Application {
     }
     
     private ApiInfo getApiInfo() {
-        Contact contact = new Contact()
-    		.name("Miguel Montoya")
-    		.url("http://gft.com")
-    		.email("mlmy@gft.com");
         return new ApiInfoBuilder()
             .title("Example Api Title")
             .description("Example Api Definition")
