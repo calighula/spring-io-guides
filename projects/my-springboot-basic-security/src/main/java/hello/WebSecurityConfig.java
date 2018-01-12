@@ -1,25 +1,30 @@
 package hello;
 
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.encoding.LdapShaPasswordEncoder;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
-import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Configuration
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
-	@Override
-	protected void configure(HttpSecurity http) throws Exception {
-		http
-			.authorizeRequests()
-				.anyRequest().fullyAuthenticated()
-				.and()
-			.formLogin();
+	@Bean
+    public PasswordEncoder passwordEncoder(){
+        PasswordEncoder encoder = new BCryptPasswordEncoder();
+        return encoder;
+    }
+	
+	protected void configureInMemory(AuthenticationManagerBuilder auth) throws Exception {
+	    auth.inMemoryAuthentication()
+	    	.withUser("user")
+	    	.password("password")
+	    	.roles("USER");
 	}
 
-	@Override
-	public void configure(AuthenticationManagerBuilder auth) throws Exception {
+	protected void configureWithLDAP(AuthenticationManagerBuilder auth) throws Exception {
 		auth
 			.ldapAuthentication()
 				.userDnPatterns("uid={0},ou=people")
@@ -31,5 +36,5 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 					.passwordEncoder(new LdapShaPasswordEncoder())
 					.passwordAttribute("userPassword");
 	}
-
+	
 }
