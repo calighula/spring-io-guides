@@ -1,27 +1,35 @@
 package hello;
 
-import org.springframework.context.annotation.Bean;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.security.authentication.encoding.LdapShaPasswordEncoder;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Configuration
+@PropertySource ("classpath:security.properties")
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
-	@Bean
-    public PasswordEncoder passwordEncoder(){
-        PasswordEncoder encoder = new BCryptPasswordEncoder();
-        return encoder;
-    }
+	@Value("${sgx.user.name}")
+	private String name;
+	
+	@Value("${sgx.user.password}")
+	private String password;
+	
+	@Value("${sgx.user.role}")
+	private String role;	
+
+	@Override
+	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+		configureInMemory(auth);
+	}
 	
 	protected void configureInMemory(AuthenticationManagerBuilder auth) throws Exception {
 	    auth.inMemoryAuthentication()
-	    	.withUser("user")
-	    	.password("password")
-	    	.roles("USER");
+	    	.withUser(name)
+	    	.password(password)
+	    	.roles(role);
 	}
 
 	protected void configureWithLDAP(AuthenticationManagerBuilder auth) throws Exception {
